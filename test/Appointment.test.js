@@ -5,15 +5,14 @@ import {
     AppointmentsDayView
 } from "../src/Appointment"
 let container
-
-
+const getCustomerData = firstName => ({firstName: firstName})
 const render = component => ReactDOM.render(component,container)
 
 beforeEach(()=>{
     container = document.createElement('div');
 })
 describe('Appointment', ()=>{
-    const getCustomerData = firstName => ({firstName: firstName})
+
 
     it('renders the customer first name', () => {
         const customerName = "Ashley"
@@ -33,9 +32,14 @@ describe("AppointmentsDayView", ()=> {
     const today = new Date()
 
     const appointments = [
-        {startsAt: today.setHours(12, 0)},
-        {startsAt: today.setHours(13,0)},
-        {startsAt: today.setHours(14,0)}
+        {
+            startsAt: today.setHours(12, 0),
+            customer: getCustomerData("Ashley")
+        },
+        {
+            startsAt: today.setHours(13,0),
+            customer: getCustomerData("Jordan")
+        }
     ]
 
     const appointmentTimeOfDay = startsAt => {
@@ -50,12 +54,22 @@ describe("AppointmentsDayView", ()=> {
 
     it("renders multiple appointments in an ol element",() =>{
         render(<AppointmentsDayView appointments={appointments} />)
+
+        //Assertions
         expect(container.querySelector('ol').children).toHaveLength(appointments.length)
         appointments.forEach((appointment,index)=>{
             expect(container.querySelectorAll('li')[index].textContent).toEqual(appointmentTimeOfDay(appointment.startsAt))
-
         })
-        // expect(container.querySelectorAll('li')[0].textContent).toEqual('12:00')
-        // expect(container.querySelectorAll('li')[1].textContent).toEqual('13:00')
+        expect(container.textContent).not.toMatch("There are no appointments scheduled for today")
+    })
+
+    it("initially shows a message saying there are no appointments today", ()=>{
+        render(<AppointmentsDayView appointments={[]}/>)
+        expect(container.textContent).toMatch("There are no appointments scheduled for today")
+    })
+
+    it("selects the first appointment by default", ()=>{
+        render(<AppointmentsDayView appointments={appointments}/>)
+        expect(container.textContent).toMatch('Ashley')
     })
 })
