@@ -1,20 +1,18 @@
 import React from "react"
-import ReactDOM from "react-dom"
 import ReactTestUtils from 'react-dom/test-utils'
+import {createContainer} from "./domManipulators";
 
 import {
     Appointment,
     AppointmentsDayView
 } from "../src/AppointmentsDayView"
-let container
+
 const getCustomerData = firstName => ({firstName: firstName})
-const render = component => ReactDOM.render(component,container)
 
-beforeEach(()=>{
-    container = document.createElement('div');
-})
+let render,container;
+beforeEach(() => {({render,container} = createContainer())})
+
 describe('Appointment', ()=>{
-
 
     it('renders the customer first name', () => {
         const customerName = "Ashley"
